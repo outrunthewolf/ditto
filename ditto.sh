@@ -13,24 +13,43 @@ logo="
 	///////   //    //     //   //////      
 
 "
+
+# Set some colours
+RESTORE='\033[0m'
+RED='\033[00;31m'
+GREEN='\033[00;32m'
+YELLOW='\033[00;33m'
+BLUE='\033[00;34m'
+PURPLE='\033[00;35m'
+CYAN='\033[00;36m'
+LIGHTGRAY='\033[00;37m'
+LRED='\033[01;31m'
+LGREEN='\033[01;32m'
+LYELLOW='\033[01;33m'
+LBLUE='\033[01;34m'
+LPURPLE='\033[01;35m'
+LCYAN='\033[01;36m'
+WHITE='\033[01;37m'
+
 # Version number
 version="1.0.0"
 # Usage text
 usage="
-\e[93m Usage:\e[39m \n
-	[options] command
+${YELLOW}Usage:${RESTORE} \n
+	${GREEN}[options] command${RESTORE}
 "
 # List of options available text
 options="
-\e[93m Options:\e[39m \n
+${YELLOW}Options:${RESTORE} \n
 "
 # List of commands available text
 commands="
-\e[93mCommands:\e[39m \n
-	\e[32m sync\e[39m \t Sync all data in the directory \n
-	\e[32m test\e[39m \t Get a break down of any changes that might occur, dry-run \n
-	\e[32m debug\e[39m\t Show some helpful things like config data, directory etc...
+${YELLOW}Commands:${RESTORE} \n
+	${GREEN} sync pull/push${RESTORE}\t Sync all data in the directory \n
+	${GREEN} test${RESTORE}\t Get a break down of any changes that might occur, dry-run \n
+	${GREEN} debug${RESTORE}\t Show some helpful things like config data, directory etc...
 "
+
 
 # Get some variables
 action="$1" # The command the user is executing
@@ -42,14 +61,14 @@ config_file="ditto.config" # basic config file
 safety_mode=false # Safety mode, to stop accidental syncs
 
 # pull function - to pull all files from live
-sync () {
+function sync () {
 	# environment
 	env=$2
 	invoke=$3
 
 	# Check we have an environment, or the environment is being overidden by a passed in server string
 	if [[ -z $env ]]; then
-		echo -e " \e[30;48;5;9m You must specify an environment from the config \e[0m"
+		echo -e "${RED}You must specify an environment from the config ${RESTORE}"
 		exit 1
 	fi
 
@@ -85,21 +104,20 @@ sync () {
 			rsync -arvz -e 'ssh -p '$port $user@$address:$remote_dir $current_dir --progress --exclude '.git' --exclude 'ditto.*'
 			;;
 		*)
-			echo -e " \e[30;48;5;9m I don't know whether to push or pull you beast! \e[0m"
+			echo -e "${RED}I don't know whether to push or pull you beast! ${RESTORE}"
 			exit 1
 		    ;;
 	esac
-	
 	exit 1
 }
 
 # advise function - run a dry run
-test () {
+function test () {
 	env=$1
 
 	# Check we have an environment
 	if [[ -z $env ]]; then
-		echo -e " \e[30;48;5;9m You must specify an environment from the config \e[0m"
+		echo -e "${RED}You must specify an environment from the config ${RESTORE}"
 		exit 1
 	fi
 
@@ -108,19 +126,19 @@ test () {
 }
 
 # Debug
-debug () {
-	echo -e "\n\e[32m Version:\e[39m" $version
-	echo -e "\e[32m Your current directory:\e[39m" $current_dir
-	echo -e "\e[32m The remote directory:\e[39m" $remote_dir$remote_dir_key
+function debug () {
+	echo -e "${GREEN} Version:${RESTORE}" $version
+	echo -e "${GREEN} Your current directory:${RESTORE}" $current_dir
+	echo -e "${GREEN} The remote directory:${RESTORE}" $remote_dir$remote_dir_key
 	echo -e ""
-	echo -e "\e[32m Staging point:\e[39m" $staging_user"@"$staging_address":"$staging_port
-	echo -e "\e[32m Production point:\e[39m" $production_user"@"$production_address":"$production_port
+	echo -e "${GREEN} Staging point:${RESTORE}" $staging_user"@"$staging_address":"$staging_port
+	echo -e "${GREEN} Production point:${RESTORE}" $production_user"@"$production_address":"$production_port
 	echo -e "\n"
 	exit 1
 }
 
 # Load config variables into the script
-load_config () {
+function load_config () {
 	key=$1
 	value=$2
 
@@ -141,10 +159,10 @@ load_config () {
 }
 
 # Check config file and parse
-check_config () {
+function check_config () {
 	if [ ! -f $current_dir"/"$config_file ]
 	then
-	    echo -e " \e[30;48;5;9m I can't find a config file in $current_dir \e[0m"
+	    echo -e "${RED} I can't find a config file in $current_dir ${RESTORE}"
 	    exit 1
 	fi
 
@@ -161,9 +179,9 @@ check_config () {
 }
 
 # Fallback for missed commands
-help () {
-	echo -e "\e[34m$logo\e[39m"
-	echo -e "\e[93m Version\e[39m" $version "\n"
+function help () {
+	echo -e "${BLUE} $logo ${RESTORE}"
+	echo -e "${YELLOW}Version${RESTORE}" $version "\n"
 	echo -e $usage "\n"
 	#echo -e $options "\n"
 	echo -e $commands "\n"
