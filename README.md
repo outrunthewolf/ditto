@@ -24,25 +24,25 @@ Usage
 
 Ditto requires a configuration file for the various environments you'd like to keep in sync. Your configuration file will be in the root directory, the same place as your git files are stored.
 
-	``` sh
-	staging_user=human
-	staging_address=192.168.1.1
-	staging_port=22
-	production_user=git
-	production_address=192.168.1.1
-	production_port=22
-	```
+    ``` sh
+    staging_user=human
+    staging_address=192.168.1.1
+    staging_port=22
+    production_user=git
+    production_address=192.168.1.1
+    production_port=22
+    ```
 
 You can add as many environments as you like and they will be available to ditto. You can then sync environments with push and pull.
 
     ``` sh
-  	$ ditto pull staging # Rsync your staging files against your local files
-  	$ ditto push production # Rsync your local files against your production files
+    $ ditto pull staging # Rsync your staging files against your local files
+    $ ditto push production # Rsync your local files against your production files
     ```
 
 To see a full list of commands run
 
     ``` sh
-  	$ ditto help
+    $ ditto help
     ```
 
