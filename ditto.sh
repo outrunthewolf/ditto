@@ -45,7 +45,7 @@ ${YELLOW}Options:${RESTORE} \n
 # List of commands available text
 commands="
 ${YELLOW}Commands:${RESTORE} \n
-	${GREEN} sync pull/push${RESTORE}\t Sync all data in the directory \n
+	${GREEN} pull/push [environment]${RESTORE}\t Sync all data in the directory \n
 	${GREEN} test${RESTORE}\t Get a break down of any changes that might occur, dry-run \n
 	${GREEN} debug${RESTORE}\t Show some helpful things like config data, directory etc...
 "
@@ -64,7 +64,7 @@ safety_mode=false # Safety mode, to stop accidental syncs
 function sync () {
 	# environment
 	env=$2
-	invoke=$3
+	invoke=$1
 
 	# Check we have an environment, or the environment is being overidden by a passed in server string
 	if [[ -z $env ]]; then
@@ -193,7 +193,10 @@ check_config
 
 # Run commands from action
 case "$1" in
-"sync")
+"pull")
+    sync "$@"
+    ;;
+"push")
     sync "$@"
     ;;
 "test")
