@@ -46,6 +46,11 @@ To see a full list of commands run
     $ ditto help
     ```
 
+Important Notes
+--------------------
+
+Remember to add ditto config files to your gitignore or you could end up exposing private information.
+
 To-Do
 --------------------
 - Incorporate more than staging and production in config
