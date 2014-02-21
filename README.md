@@ -49,3 +49,4 @@ To see a full list of commands run
 To-Do
 --------------------
 - Incorporate more than staging and production in config
+- Support custom directories in a config
