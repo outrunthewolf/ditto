@@ -23,7 +23,7 @@ Usage
 --------------------
 
 Ditto requires a configuration file for the various environments you'd like to keep in sync. Your configuration file will be in the root directory, the same place as your git files are stored.
-
+    
     ``` sh
     staging_user=human
     staging_address=192.168.1.1
@@ -46,3 +46,6 @@ To see a full list of commands run
     $ ditto help
     ```
 
+To-Do
+--------------------
+- Incorporate more than staging and production in config
