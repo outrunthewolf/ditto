@@ -178,6 +178,7 @@ function check_config () {
 	  fi
 	done < $current_dir"/"$config_file
 
+	# Check the config file contains something
 	if [[ $i -le 0 ]];
 	then
 		echo -e "${RED} Your ditto config contains no real information ${RESTORE}"
@@ -185,11 +186,10 @@ function check_config () {
 	fi
 }
 
-# Check environment against a
+# Check we have an environment, or the environment is being overidden by a passed in server string
 function check_environment () {
 	env=$1
 
-	# Check we have an environment, or the environment is being overidden by a passed in server string
 	if [[ -z $env ]]; then
 		echo -e "${RED} You must specify an environment from the config ${RESTORE}"
 		exit 1
