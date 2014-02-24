@@ -3,14 +3,14 @@
 # Super logo
 logo="
 
-	 *******   **   **     **           
-	/**////** //   /**    /**           
-	/**    /** ** ****** ******  ****** 
+	 *******   **   **     **
+	/**////** //   /**    /**
+	/**    /** ** ****** ******  ******
 	/**    /**/**///**/ ///**/  **////**
 	/**    /**/**  /**    /**  /**   /**
 	/**    ** /**  /**    /**  /**   /**
-	/*******  /**  //**   //** //****** 
-	///////   //    //     //   //////      
+	/*******  /**  //**   //** //******
+	///////   //    //     //   //////
 
 "
 
@@ -32,7 +32,7 @@ LCYAN='\033[01;36m'
 WHITE='\033[01;37m'
 
 # Version number
-version="1.0.0"
+version="1.0.1"
 # Usage text
 usage="
 ${YELLOW}Usage:${RESTORE} \n
@@ -50,7 +50,6 @@ ${YELLOW}Commands:${RESTORE} \n
 	${GREEN} debug${RESTORE}\t Show some helpful things like config data, directory etc...
 "
 
-
 # Get some variables
 action="$1" # The command the user is executing
 environment="$2" # The environment, staging, production etc..
@@ -66,11 +65,11 @@ function sync () {
 	env=$2
 	invoke=$1
 
-	# Check we have an environment, or the environment is being overidden by a passed in server string
-	if [[ -z $env ]]; then
-		echo -e "${RED}You must specify an environment from the config ${RESTORE}"
-		exit 1
-	fi
+	# Check the config file exists
+	check_config
+
+	# Check environment
+	check_environment $env
 
 	# Double check we want to do this in safety mode
 	if [[ "$safety_mode" = true ]]; then
@@ -104,7 +103,7 @@ function sync () {
 			rsync -arvz -e 'ssh -p '$port $user@$address:$remote_dir $current_dir --progress --exclude '.git' --exclude 'ditto.*'
 			;;
 		*)
-			echo -e "${RED}I don't know whether to push or pull you beast! ${RESTORE}"
+			echo -e "${RED} I don't know whether to push or pull you beast! ${RESTORE}"
 			exit 1
 		    ;;
 	esac
@@ -113,11 +112,12 @@ function sync () {
 
 # advise function - run a dry run
 function test () {
-	env=$1
+	env=$2
+	invoke=$1
 
 	# Check we have an environment
 	if [[ -z $env ]]; then
-		echo -e "${RED}You must specify an environment from the config ${RESTORE}"
+		echo -e "${RED} You must specify an environment to affect from your ditto config ${RESTORE}"
 		exit 1
 	fi
 
@@ -125,7 +125,7 @@ function test () {
 	exit 1
 }
 
-# Debug
+# Show some useful information about the destinations
 function debug () {
 	echo -e "${GREEN} Version:${RESTORE}" $version
 	echo -e "${GREEN} Your current directory:${RESTORE}" $current_dir
@@ -142,6 +142,7 @@ function load_config () {
 	key=$1
 	value=$2
 
+	# Loop the keys
 	case "$key" in
 		"staging_address")
 		    staging_address=$value
@@ -176,6 +177,23 @@ function check_config () {
 	    ((i++))
 	  fi
 	done < $current_dir"/"$config_file
+
+	if [[ $i -le 0 ]];
+	then
+		echo -e "${RED} Your ditto config contains no real information ${RESTORE}"
+	    exit 1
+	fi
+}
+
+# Check environment against a
+function check_environment () {
+	env=$1
+
+	# Check we have an environment, or the environment is being overidden by a passed in server string
+	if [[ -z $env ]]; then
+		echo -e "${RED} You must specify an environment from the config ${RESTORE}"
+		exit 1
+	fi
 }
 
 # Fallback for missed commands
@@ -187,9 +205,6 @@ function help () {
 	echo -e $commands "\n"
 	exit 1
 }
-
-# Check the config file exists
-check_config
 
 # Run commands from action
 case "$1" in
