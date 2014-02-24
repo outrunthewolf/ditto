@@ -53,7 +53,4 @@ Remember to add ditto and any config files to your gitignore or you could end up
 
 To-Do
 --------------------
-- Incorporate more than staging and production in config
-- Support custom directories in a config
-- Allow extra rsync options to be specified
-- ~~Check config on a command, rather than before~~
+See issues
