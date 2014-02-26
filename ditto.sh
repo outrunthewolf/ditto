@@ -130,16 +130,27 @@ function test () {
 
 # Show some useful information about the destinations
 function debug () {
+	# Load in config variables
+	check_config
+
+	# Show some data
 	echo -e "${GREEN} Version:${RESTORE}" $version
 	echo -e "${GREEN} Your current directory:${RESTORE}" $current_dir
 	echo -e "${GREEN} The remote directory:${RESTORE}" $remote_dir$remote_dir_key
 	echo -e ""
-	echo -e "${GREEN} Staging point:${RESTORE}" $staging_user"@"$staging_address":"$staging_port
-	echo -e "${GREEN} Production point:${RESTORE}" $production_user"@"$production_address":"$production_port
+
+	# Loop config variables to show avilable
+	for (( x=0 ; x < ${#configKey[@]}; x++ ))
+	do
+	    echo -e "${GREEN}" "${configKey[$x]}" ":${RESTORE}" "${configValue[$x]}"
+	done
+
+	# Get outta there
 	echo -e "\n"
 	exit 1
 }
 
+# Locate an array key based on a string
 function find_config_key () {
 	key=$1
 
@@ -149,13 +160,13 @@ function find_config_key () {
 	    if [ $key == "${configKey[$x]}" ]
 	    then
 	    	result="${configValue[$x]}"
-	    fi 
+	    fi
 	done
 }
 
 # Check config file and parse
 function check_config () {
-	# Check for a config file 
+	# Check for a config file
 	if [ ! -f $current_dir"/"$config_file ]
 	then
 	    echo -e "${RED} I can't find a config file in $current_dir ${RESTORE}"
