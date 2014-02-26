@@ -84,15 +84,18 @@ function sync () {
 
 	# Get address
 	tmp=$env"_address"
-	address="${!tmp}"
+	find_config_key "${tmp}"
+	address=$result
 
 	# Get user
 	tmp=$env"_user"
-	user="${!tmp}"
+	find_config_key "${tmp}"
+	user=$result
 
 	# Get port
 	tmp=$env"_port"
-	port="${!tmp}"
+	find_config_key "${tmp}"
+	port=$result
 
 	# Check if we're pushing or pulling
 	case "$invoke" in
@@ -137,30 +140,22 @@ function debug () {
 	exit 1
 }
 
-# Load config variables into the script
-function load_config () {
+function find_config_key () {
 	key=$1
-	value=$2
 
-	# Loop the keys
-	case "$key" in
-		"staging_address")
-		    staging_address=$value
-		    ;;
-		"staging_user")
-			staging_user=$value
-			;;
-		"staging_port")
-			staging_port=$value
-			;;
-		*)
-		    return
-		    ;;
-	esac
+	# test loop
+	for (( x=0 ; x < ${#configKey[@]}; x++ ))
+	do
+	    if [ $key == "${configKey[$x]}" ]
+	    then
+	    	result="${configValue[$x]}"
+	    fi 
+	done
 }
 
 # Check config file and parse
 function check_config () {
+	# Check for a config file 
 	if [ ! -f $current_dir"/"$config_file ]
 	then
 	    echo -e "${RED} I can't find a config file in $current_dir ${RESTORE}"
@@ -171,9 +166,8 @@ function check_config () {
 	i=0
 	while read line; do
 	  if [[ "$line" =~ ^[^#]*= ]]; then
-	    key[i]=${line%%=*}
-	    value[i]=${line##*=}
-	    load_config ${key[i]} ${value[i]}
+	    configKey[$i]=${line%%=*}
+	    configValue[$i]=${line##*=}
 	    ((i++))
 	  fi
 	done < $current_dir"/"$config_file
