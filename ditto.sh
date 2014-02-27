@@ -32,7 +32,7 @@ LCYAN='\033[01;36m'
 WHITE='\033[01;37m'
 
 # Version number
-version="1.0.1"
+version="1.1.0"
 # Usage text
 usage="
 ${YELLOW}Usage:${RESTORE} \n
