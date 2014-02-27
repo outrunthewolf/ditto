@@ -90,7 +90,7 @@ function sync () {
 	unset result
 
 	# Look for a remote directory in the config
-	find_config_key "remote_address"
+	find_config_key "remote_directory"
 	tmp=$result
 	unset result
 
