@@ -54,7 +54,7 @@ ${YELLOW}Commands:${RESTORE} \n
 action="$1" # The command the user is executing
 environment="$2" # The environment, staging, production etc..
 current_dir=${PWD} # The directory theyre working from
-remote_dir="/home/chris/" # The remote directory path
+remote_dir=${PWD} # The remote directory path
 remote_dir_key=${PWD##*/} # The remote folder
 config_file="ditto.config" # basic config file
 safety_mode=false # Safety mode, to stop accidental syncs
@@ -86,16 +86,32 @@ function sync () {
 	tmp=$env"_address"
 	find_config_key "${tmp}"
 	address=$result
+	unset result
 
 	# Get user
 	tmp=$env"_user"
 	find_config_key "${tmp}"
 	user=$result
+	unset result
 
 	# Get port
 	tmp=$env"_port"
 	find_config_key "${tmp}"
 	port=$result
+	unset result
+
+	# Check if we have a remote diretory set
+	find_config_key "remote_address"
+	tmp=$result
+
+	# Check the remote directory exists
+	if [[ ! -z $tmp ]]; then
+		remote_dir=$tmp
+	fi
+
+	echo $remote_dir
+
+	exit 1
 
 	# Check if we're pushing or pulling
 	case "$invoke" in
