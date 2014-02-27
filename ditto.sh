@@ -57,7 +57,7 @@ current_dir=${PWD} # The directory theyre working from
 remote_dir=${PWD} # The remote directory path
 remote_dir_key=${PWD##*/} # The remote folder
 config_file="ditto.config" # basic config file
-safety_mode=false # Safety mode, to stop accidental syncs
+safety_mode=true # Safety mode, to stop accidental syncs
 
 # pull function - to pull all files from live
 function sync () {
@@ -70,17 +70,6 @@ function sync () {
 
 	# Check environment
 	check_environment $env
-
-	# Double check we want to do this in safety mode
-	if [[ "$safety_mode" = true ]]; then
-		echo "Are you sure?"
-		select yn in "y" "n"; do
-		    case $yn in
-		        n ) return;;
-		        n ) exit;;
-		    esac
-		done
-	fi
 
 	# Get address
 	tmp=$env"_address"
@@ -100,18 +89,42 @@ function sync () {
 	port=$result
 	unset result
 
-	# Check if we have a remote diretory set
+	# Look for a remote directory in the config
 	find_config_key "remote_address"
 	tmp=$result
+	unset result
 
-	# Check the remote directory exists
+	# Check if we need to override the original remote directory
 	if [[ ! -z $tmp ]]; then
 		remote_dir=$tmp
 	fi
 
-	echo $remote_dir
+	# Look for safety mode in config
+	find_config_key "safety_mode"
+	tmp=$result
+	unset result
 
-	exit 1
+	# Check if we need to override the original safety mode
+	if [[ ! -z $tmp ]]; then
+		safety_mode=$tmp
+	fi
+
+	# Double check we want to do this in safety mode
+	if [[ "$safety_mode" = true ]]; then
+		read -p "Continue to ${invoke} ${env} (y/n)?" choice
+		case "$choice" in
+			y|Y )
+
+				;;
+			n|N )
+				echo -e "${YELLOW} Sync cancelled ${RESTORE}"
+				exit 1
+				;;
+			* )
+				echo -e "${YELLOW} Sync cancelled ${RESTORE}"
+				exit 1
+		esac
+	fi
 
 	# Check if we're pushing or pulling
 	case "$invoke" in
@@ -222,7 +235,6 @@ function help () {
 	echo -e "${BLUE} $logo ${RESTORE}"
 	echo -e "${YELLOW}Version${RESTORE}" $version "\n"
 	echo -e $usage "\n"
-	#echo -e $options "\n"
 	echo -e $commands "\n"
 	exit 1
 }
