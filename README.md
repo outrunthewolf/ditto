@@ -1,9 +1,18 @@
 ditto
 =====
 
-ditto is Rsync for deployment.
+Ditto is Rsync for deployment.
 
 Sometimes you dont want to worry about running git, composer or other commands on your production servers. Ditto uses rsync to duplicate applications quickly and easily across many environments.
+
+### Dependencies & Support
+Ditto has been tested and runs in the following shells:
+
+- zsh
+- bash
+- fish
+
+If you run any other shell environments and ditto runs fine in those, please help me keep these updated.
 
 Installation
 --------------------
@@ -35,7 +44,7 @@ production_user=git
 production_address=192.168.1.1
 production_port=22
 safety_mode=true
-remote_directory
+remote_directory=/home/user/app
 ```
 
 You can add as many environments as you like and they will be available to ditto. You can then sync environments with push and pull.
